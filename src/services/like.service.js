@@ -1,12 +1,19 @@
-const LikeRestaurant = require('../models/LikeRestaurant')
-const User = require('../models/User')
-const Restaurant = require('../models/Restaurant')
+const { Restaurant, User, LikeRestaurant } = require('../models')
 
 const likeService = {
     getLikes: async () => {
         try {
             const data = await LikeRestaurant.findAll({
-                include: [User, Restaurant]
+                include: [
+                    {
+                        model: User,
+                        as: "user"
+                    },
+                    {
+                        model: Restaurant,
+                        as: "restaurant"
+                    }
+                ]
             })
 
             return data

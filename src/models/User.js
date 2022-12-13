@@ -1,46 +1,49 @@
 const { DataTypes } = require("sequelize")
 const sequelize = require('./index')
-const LikeRestaurant = require("./LikeRestaurant")
-const Restaurant = require("./Restaurant")
 
-const User = sequelize.define("User", {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        field: "user_id"
-    },
+module.exports = (sequelize) => {
+    return sequelize.define("User", {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            field: "user_id"
+        },
 
-    fullName: {
-        type: DataTypes.STRING(100),
-        field: "full_name"
-    },
+        fullName: {
+            type: DataTypes.STRING(100),
+            field: "full_name",
+            allowNull: false
+        },
 
-    email: {
-        type: DataTypes.STRING(100),
-        unique: true
-    },
+        email: {
+            type: DataTypes.STRING(100),
+            unique: true,
+            allowNull: false
+        },
 
-    password: {
-        type: DataTypes.STRING(100)
-    }
-}, {
-    timestamps: false,
-    tableName: "users",
-
-    defaultScope: {
-        attributes: {
-            exclude: ["password"]
+        password: {
+            type: DataTypes.STRING(100),
+            allowNull: false
         }
-    },
+    }, {
+        timestamps: false,
+        tableName: "users",
 
-    hooks: {
-        afterSave: (record) => {
-            delete record.dataValues.password
-            return record
+        defaultScope: {
+            attributes: {
+                exclude: ["password"]
+            }
+        },
+
+        hooks: {
+            afterSave: (record) => {
+                delete record.dataValues.password
+                return record
+            }
         }
-    }
-})
+    })
+}
 
 // User.belongsToMany(Restaurant, { through: LikeRestaurant, foreignKey: "userId" })
 // Restaurant.belongsToMany(User, { through: LikeRestaurant, foreignKey: "resId", otherKey: "userId" })
@@ -51,4 +54,3 @@ const User = sequelize.define("User", {
 
 // User.belongsToMany(Food, { through: Order, foreignKey: "userId", otherKey: "foodId" })
 // Food.belongsToMany(User, { through: Order, foreignKey: "foodId", otherKey: "userId" })
-module.exports = User

@@ -1,64 +1,44 @@
 const { DataTypes } = require("sequelize")
-const sequelize = require('./index')
 
-const Food = require("./Food")
-const User = require('./User')
+module.exports = (sequelize) => {
+    return sequelize.define("Order", {
+        id: {
+            type: DataTypes.VIRTUAL,
+            unique: 'compositeIndex',
+            autoIncrement: true,
+            primaryKey: true,
+            get() {
+                return `${this.userId}-${this.foodId}`
+            }
+        },
+        userId: {
+            type: DataTypes.INTEGER,
+            field: "user_id",
+        },
 
-const Order = sequelize.define("Order", {
-    id: {
-        type: DataTypes.VIRTUAL,
-        unique: 'compositeIndex',
-        autoIncrement: true,
-        primaryKey: true,
-        get() {
-            return `${this.userId}-${this.foodId}`
+        foodId: {
+            type: DataTypes.INTEGER,
+            field: "food_id",
+        },
+
+        amount: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+
+        code: {
+            type: DataTypes.STRING(100),
+            allowNull: false
+        },
+
+        arrSubId: {
+            type: DataTypes.STRING(100),
+            field: "arr_sub_id",
+            allowNull: false
         }
-    },
-    userId: {
-        type: DataTypes.INTEGER,
-        field: "user_id",
-        references: {
-            model: User,
-            key: "id"
-        }
-    },
+    }, {
+        timestamps: false,
+        tableName: "orders"
+    })
 
-    foodId: {
-        type: DataTypes.INTEGER,
-        field: "food_id",
-        references: {
-            model: Food,
-            key: "id"
-        }
-    },
-
-    amount: {
-        type: DataTypes.INTEGER
-    },
-
-    code: {
-        type: DataTypes.STRING(100)
-    },
-
-    arrSubId: {
-        type: DataTypes.STRING(100),
-        field: "arr_sub_id"
-    }
-}, {
-    timestamps: false,
-    tableName: "orders"
-})
-
-
-// Order.removeAttribute("id")
-// User.hasMany(Order, {
-//     foreignKey: "userId"
-// })
-// Order.belongsTo(User)
-
-// Food.hasMany(Order, {
-//     foreignKey: "foodId"
-// })
-// Order.belongsTo(Food)
-
-module.exports = Order
+}

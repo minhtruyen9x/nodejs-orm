@@ -1,17 +1,4 @@
-const LikeRestaurant = require('../models/LikeRestaurant')
-const User = require('../models/User')
-const Restaurant = require('../models/Restaurant')
-const RateRestaurant = require('../models/RateRestaurant')
-
-Restaurant.hasMany(LikeRestaurant, {
-    foreignKey: "resId",
-    as: "likes"
-})
-
-Restaurant.hasMany(RateRestaurant, {
-    foreignKey: "resId",
-    as: "rates",
-})
+const { RateRestaurant, Restaurant, User, LikeRestaurant } = require('../models')
 
 const restaurantService = {
     getRestaurants: async () => {

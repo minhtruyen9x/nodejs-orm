@@ -1,12 +1,19 @@
-const RateRestaurant = require('../models/RateRestaurant')
-const User = require('../models/User')
-const Restaurant = require('../models/Restaurant')
+const { Restaurant, User, RateRestaurant } = require('../models')
 
 const rateService = {
     getRates: async () => {
         try {
             const data = await RateRestaurant.findAll({
-                include: [User, Restaurant]
+                include: [
+                    {
+                        model: User,
+                        as: "user"
+                    },
+                    {
+                        model: Restaurant,
+                        as: "restaurant"
+                    }
+                ]
             })
 
             return data
