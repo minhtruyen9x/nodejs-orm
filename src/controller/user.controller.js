@@ -10,18 +10,30 @@ const getUsers = () =>
         }
     }
 
-const getUserDetail = () =>
+const getUserLikes = () =>
     async (req, res) => {
         try {
-            const { id } = req.params
-            const data = await userService.getUserDetail(id)
+            const { userId } = req.params
+            const data = await userService.getUserLikes(userId)
             res.status(200).json({ data })
         } catch (error) {
-            res.status(500).json({ error: error.message })
+            res.status(500).json({ error: error })
+        }
+    }
+
+const getUserRates = () =>
+    async (req, res) => {
+        try {
+            const { userId } = req.params
+            const data = await userService.getUserRates(userId)
+            res.status(200).json({ data })
+        } catch (error) {
+            res.status(500).json({ error: error })
         }
     }
 
 module.exports = {
     getUsers,
-    getUserDetail
+    getUserLikes,
+    getUserRates
 }

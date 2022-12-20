@@ -9,7 +9,7 @@ const createRate = () =>
 
             res.status(200).json({ data: createdRate })
         } catch (error) {
-            res.status(500).json({ error: error.message })
+            res.status(500).json({ error: error })
         }
     }
 

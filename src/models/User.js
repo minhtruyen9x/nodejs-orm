@@ -1,5 +1,4 @@
 const { DataTypes } = require("sequelize")
-const sequelize = require('./index')
 
 module.exports = (sequelize) => {
     return sequelize.define("User", {
@@ -45,12 +44,3 @@ module.exports = (sequelize) => {
     })
 }
 
-// User.belongsToMany(Restaurant, { through: LikeRestaurant, foreignKey: "userId" })
-// Restaurant.belongsToMany(User, { through: LikeRestaurant, foreignKey: "resId", otherKey: "userId" })
-
-// User.belongsToMany(Restaurant, { through: RateRestaurant, foreignKey: "userId", otherKey: "resId" })
-// Restaurant.belongsToMany(User, { through: RateRestaurant, foreignKey: "resId", otherKey: "userId" })
-
-
-// User.belongsToMany(Food, { through: Order, foreignKey: "userId", otherKey: "foodId" })
-// Food.belongsToMany(User, { through: Order, foreignKey: "foodId", otherKey: "userId" })

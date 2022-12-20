@@ -4,16 +4,7 @@ const likeService = {
     getLikes: async () => {
         try {
             const data = await LikeRestaurant.findAll({
-                include: [
-                    {
-                        model: User,
-                        as: "user"
-                    },
-                    {
-                        model: Restaurant,
-                        as: "restaurant"
-                    }
-                ]
+                include: ['user', 'restaurant'],
             })
 
             return data
@@ -26,19 +17,27 @@ const likeService = {
         try {
             const { userId, resId } = data
 
-            const isLiked = await LikeRestaurant.findOne({
-                where: {
-                    userId,
-                    resId
-                }
-            })
+            const user = await User.findByPk(userId)
+            if (!user) {
+                throw new Error("User Not Found")
+            }
+
+            const restaurant = await Restaurant.findByPk(resId)
+            if (!restaurant) {
+                throw new Error("Restaurant Not Found")
+            }
+
+            const isLiked = await restaurant.hasLikedUser(user.id)
+            console.log(restaurant.__proto__)
 
             if (isLiked) {
-                throw new Error("User has already like this restaurant")
+                throw "User has like this restaurant"
             }
-            const createdLike = await LikeRestaurant.create({ userId, resId })
+            else {
+                await restaurant.addLikedUser(user.id)
+            }
 
-            return createdLike
+            return 'OK'
         } catch (error) {
             throw error
         }
@@ -47,25 +46,29 @@ const likeService = {
     deleteLike: async (id) => {
         try {
             const [userId, resId] = id.split("-")
-            const isFound = await LikeRestaurant.findOne({
-                where: {
-                    userId,
-                    resId
-                }
-            })
-            console.log(id, userId, resId, isFound)
-            if (!isFound) {
-                throw new Error("Not found th record, may be deleted")
+
+            const user = await User.findByPk(userId)
+            if (!user) {
+                throw new Error("User Not Found")
             }
 
-            await LikeRestaurant.destroy({
-                where: {
-                    userId,
-                    resId
-                }
-            })
+            const restaurant = await Restaurant.findByPk(resId)
+            if (!restaurant) {
+                throw new Error("Restaurant Not Found")
+            }
 
-            return "OK"
+            const isLiked = await restaurant.hasLikedUser(user.id)
+            console.log(restaurant.__proto__)
+
+            if (isLiked) {
+                await restaurant.removeLikedUser(user.id)
+            }
+            else {
+                throw "User haven't  like this restaurant Yet"
+            }
+            console.log(isLiked)
+
+            return 'OK'
         } catch (error) {
             throw error
         }

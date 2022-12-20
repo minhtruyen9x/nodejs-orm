@@ -9,7 +9,7 @@ const createLike = () =>
 
             res.status(200).json({ data: createdLike })
         } catch (error) {
-            res.status(500).json({ error: error.message })
+            res.status(500).json({ error: error })
         }
     }
 
@@ -20,7 +20,7 @@ const deleteLike = () =>
             await likeService.deleteLike(id)
             res.status(200).json("OK!")
         } catch (error) {
-            res.status(500).json({ error: error.message })
+            res.status(500).json({ error: error })
         }
     }
 
@@ -31,7 +31,7 @@ const getLikes = () =>
             // const ress = await data.getUsers()
             res.status(200).json({ data })
         } catch (error) {
-            res.status(500).json({ error: error.message })
+            res.status(500).json({ error: error })
         }
     }
 

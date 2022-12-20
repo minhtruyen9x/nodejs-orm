@@ -3,20 +3,15 @@ const { Restaurant, User, RateRestaurant } = require('../models')
 const rateService = {
     getRates: async () => {
         try {
-            const data = await RateRestaurant.findAll({
-                include: [
-                    {
-                        model: User,
-                        as: "user"
-                    },
-                    {
-                        model: Restaurant,
-                        as: "restaurant"
-                    }
-                ]
-            })
+            try {
+                const data = await RateRestaurant.findAll({
+                    include: ['user', 'restaurant'],
+                })
 
-            return data
+                return data
+            } catch (error) {
+                throw error
+            }
         } catch (error) {
             throw error
         }
@@ -25,19 +20,27 @@ const rateService = {
         try {
             const { userId, resId, amount } = data
 
-            const isRated = await RateRestaurant.findOne({
-                where: {
-                    userId,
-                    resId
-                }
-            })
+            const user = await User.findByPk(userId)
+            if (!user) {
+                throw "User Not Found"
+            }
+
+            const restaurant = await Restaurant.findByPk(resId)
+            if (!restaurant) {
+                throw "Restaurant Not Found"
+            }
+
+            const isRated = await restaurant.hasRatedUser(user.id)
+            console.log(restaurant.__proto__)
 
             if (isRated) {
-                throw new Error("User has already rated this restaurant")
+                throw "User has rated this restaurant"
             }
-            const createdRate = await RateRestaurant.create({ userId, resId, amount })
+            else {
+                await restaurant.addRatedUser(user.id, { through: { amount } })
+            }
 
-            return createdRate
+            return 'OK'
         } catch (error) {
             throw error
         }

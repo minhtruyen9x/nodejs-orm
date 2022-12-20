@@ -1,19 +1,31 @@
-const { RateRestaurant, Restaurant, User, LikeRestaurant } = require('../models')
+const { User } = require('../models')
 
 const userService = {
     getUsers: async () => {
         try {
-            const data = await User.findAll({
-                include: [
-                    {
-                        model: LikeRestaurant,
-                        as: "likes",
-                    },
-                    {
-                        model: RateRestaurant,
-                        as: "rates",
-                    },
-                ]
+            const data = await User.findAll()
+
+            return data
+        } catch (error) {
+            throw error
+        }
+    },
+
+    getUserLikes: async (userId) => {
+        try {
+            const user = await User.findByPk(userId)
+            if (!user) {
+                throw 'User not found'
+            }
+            const data = User.findOne({
+                where: { id: userId },
+                include: {
+                    association: 'likedRestaurants',
+                    through: {
+                        attributes: [],
+                    }
+                },
+
             })
 
             return data
@@ -21,30 +33,21 @@ const userService = {
             throw error
         }
     },
-    getUserDetail: async (id) => {
+
+    getUserRates: async (userId) => {
         try {
-            const data = await User.findOne({
-                where: {
-                    id
-                },
-                include: [
-                    {
-                        model: LikeRestaurant,
-                        as: "likes",
-                        include: {
-                            model: Restaurant,
-                            as: "restaurant"
-                        },
-                    },
-                    {
-                        model: RateRestaurant,
-                        as: "rates",
-                        include: {
-                            model: Restaurant,
-                            as: "restaurant"
-                        },
+            const user = await User.findByPk(userId)
+            if (!user) {
+                throw 'User not found'
+            }
+            const data = User.findOne({
+                where: { id: userId },
+                include: {
+                    association: 'ratedRestaurants',
+                    through: {
+                        attributes: ['amount'],
                     }
-                ]
+                },
             })
 
             return data

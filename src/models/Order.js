@@ -2,15 +2,15 @@ const { DataTypes } = require("sequelize")
 
 module.exports = (sequelize) => {
     return sequelize.define("Order", {
-        id: {
-            type: DataTypes.VIRTUAL,
-            unique: 'compositeIndex',
-            autoIncrement: true,
-            primaryKey: true,
-            get() {
-                return `${this.userId}-${this.foodId}`
-            }
-        },
+        // id: {
+        //     type: DataTypes.VIRTUAL,
+        //     unique: 'compositeIndex',
+        //     autoIncrement: true,
+        //     primaryKey: true,
+        //     get() {
+        //         return `${this.userId}-${this.foodId}`
+        //     }
+        // },
         userId: {
             type: DataTypes.INTEGER,
             field: "user_id",

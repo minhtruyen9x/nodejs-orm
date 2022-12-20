@@ -1,16 +1,31 @@
-const { RateRestaurant, Restaurant, User, LikeRestaurant } = require('../models')
+const { Restaurant } = require('../models')
 
 const restaurantService = {
     getRestaurants: async () => {
         try {
-            const data = await Restaurant.findAll({
-                include: [{
-                    model: LikeRestaurant,
-                    as: "likes"
-                }, {
-                    model: RateRestaurant,
-                    as: "rates"
-                }]
+            const data = await Restaurant.findAll()
+
+            return data
+        } catch (error) {
+            throw error
+        }
+    },
+
+    getRestaurantLikes: async (resId) => {
+        try {
+            const restaurant = await Restaurant.findByPk(resId)
+            if (!restaurant) {
+                throw 'restaurant not found'
+            }
+
+            const data = await Restaurant.findOne({
+                where: { id: resId },
+                include: {
+                    association: 'likedUsers',
+                    through: {
+                        attributes: [],
+                    }
+                },
             })
 
             return data
@@ -18,30 +33,22 @@ const restaurantService = {
             throw error
         }
     },
-    getRestaurantDetail: async (id) => {
+
+    getRestaurantRates: async (resId) => {
         try {
+            const restaurant = await Restaurant.findByPk(resId)
+            if (!restaurant) {
+                throw 'restaurant not found'
+            }
+
             const data = await Restaurant.findOne({
-                where: {
-                    id
-                },
-                include: [
-                    {
-                        model: LikeRestaurant,
-                        as: "likes",
-                        include: {
-                            model: User,
-                            as: "user"
-                        }
-                    },
-                    {
-                        model: RateRestaurant,
-                        as: "rates",
-                        include: {
-                            model: User,
-                            as: "user"
-                        }
+                where: { id: resId },
+                include: {
+                    association: 'ratedUsers',
+                    through: {
+                        attributes: ['amount'],
                     }
-                ]
+                },
             })
 
             return data

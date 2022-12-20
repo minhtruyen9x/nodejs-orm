@@ -26,7 +26,7 @@ module.exports = (sequelize) => {
 
         description: {
             type: DataTypes.STRING(255),
-            field: "descr"
+            field: "desc"
         },
 
         typeId: {
